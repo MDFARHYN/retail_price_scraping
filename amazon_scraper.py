@@ -5,7 +5,7 @@ import csv
 import os
 from datetime import datetime
 
-# Proxy and headers configuration
+# Proxy and headers configuration for avoid blocking
 proxies = {
     "https": "http://PROXY_USERNAME:PROXY_PASS@PROXY_SERVER:PROXY_PORT/"
 }
@@ -15,12 +15,13 @@ headers = {
     'content-encoding': 'gzip'
 }
 
-url = "https://www.walmart.com/ip/Men-s-G-Shock-GA100L-8A-Tan-Silicone-Japanese-Quartz-Sport-Watch/166515367?classType=REGULAR"
+url = "https://www.amazon.com/Fitbit-Management-Intensity-Tracking-Midnight/dp/B0B5F9SZW7/?_encoding=UTF8&pd_rd_w=raGwi&content-id=amzn1.sym.9929d3ab-edb7-4ef5-a232-26d90f828fa5&pf_rd_p=9929d3ab-edb7-4ef5-a232-26d90f828fa5&pf_rd_r=A1B0XQ919M066QVE71VN&pd_rd_wg=Aw2vX&pd_rd_r=69a343dc-b5f2-4e2a-ae85-2ca4e3945a26&ref_=pd_hp_d_btf_crs_zg_bs_3375251&th=1"
 
 # Scraping the price from the webpage
-download_content = requests.get(url, headers=headers).text
-soup = BeautifulSoup(download_content, 'lxml')
-price = soup.find("span", class_="a-price-whole")
+download_content = requests.get(url,proxies=proxies,headers=headers).text #downloading the html using python request and also using proxy for avoid blocking
+soup = BeautifulSoup(download_content, 'lxml') #parsing the HTML content using BeautifulSoup
+price = soup.find("span", class_="a-price-whole")  #using soup.find method for target price
+
 
 # Cleaning and converting the price
 price = price.text.strip().replace('.', '')
@@ -53,7 +54,7 @@ def save_to_csv(url, price):
 def send_email():
     email = "your email"
     receiver_email = "receiver_email"
-    subject = "Walmart Price Alert"
+    subject = "Amazon Price Alert"
     message = f"Great news! The price has dropped. The new price is now {price}!"
     text = f"Subject:{subject}\n\n{message}"
 
